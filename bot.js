@@ -2,16 +2,30 @@ console.log("The bot is starting...");
 
 var Twit = require('twit');
 
-/* Create a new twit instance to be used to make requests to twitter's APIs. */
+// create a new twit instance to be used to make requests to twitter's APIs
 var config = require('./config');
 var T = new Twit(config);
 
-/** to update status **/
-T.post('statuses/update', { status: 'Hey, miss me? #SherlockLive' }, function(err, data, response) {
-  console.log(data)
-})
+// Data that I'm interested:
+// data.user.screen_name;
+// data.text;
 
-/** to search for tweets **/
-T.get('search/tweets', { q: 'Eurus since:2016-01-10', count: 50 }, function(err, data, response) {
-  console.log(data)
-})
+function searchTweets (){
+  var params = {
+    q: 'Eurus, Sherrinford',
+    count: 10,
+    lang: 'en'
+  };
+
+  T.get('search/tweets', params, getTweets);
+
+  function getTweets (err, data, response) {
+    var tweets = data.statuses;
+    var tweetId = tweets.map(function(data){
+      return data.user.screen_name;
+    });
+    console.log(tweetId);
+  }
+}
+
+searchTweets();
